@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>River of tildes</title>
+    <style>
+
+    body {
+      font-family: courier;
+    }
+
+    </style>
+  </head>
+
+  <body>
+
+    <h1>~ ~ ~ R I V E R ~ ~ ~</h1>
+    <p>using <a href="http://tilde.club/~delfuego/tilde.24h.json">http://tilde.club/~delfuego/tilde.24h.json</a></p>
+
+    <div id="tilde-river"></div>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+  <script>
+    $(document).ready(function() {
+      var river = $("#tilde-river");
+      $.get("http://tilde.club/~delfuego/tilde.24h.json", function(data) {
+        console.log(data);
+
+        data.pagelist.slice(0,10).forEach(function(page, index) {
+          river.append('<h2><a href="'+page.homepage+'">~'+page.username+'</a></h2><p>Last modified '+page.modtime+'</p><iframe src="'+page.homepage+'" width="100%" height="300"></iframe>')
+        })
+      })
+    });
+  </script>
+  </body>
+</html>
