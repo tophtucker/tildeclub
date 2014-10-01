@@ -20,16 +20,52 @@
     <div id="tilde-river"></div>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
   <script>
     $(document).ready(function() {
-      var river = $("#tilde-river");
-      $.get("http://tilde.club/~delfuego/tilde.24h.json", function(data) {
-        console.log(data);
+      var river = $("#tilde-river"),
+          progLoadBuffer = 200,
+          progLoadLimit = 10,
+          data,
+          i,
+          allItemsRevealed = false;
 
-        data.pagelist.slice(0,10).forEach(function(page, index) {
-          river.append('<h2><a href="'+page.homepage+'">~'+page.username+'</a></h2><p>Last modified '+page.modtime+'</p><iframe src="'+page.homepage+'" width="100%" height="300"></iframe>')
+      $.get("http://tilde.club/~delfuego/tilde.24h.json", function(ajaxData) {
+        console.log(ajaxData);
+        data = ajaxData;
+
+        console.log("loaded, adding first items");
+        getNewItems();
+
+        $(window).scroll(function(event) {
+          if(!allItemsRevealed) {
+            if($(window).scrollTop() + $(window).height() > $(document).height() - progLoadBuffer) {
+              console.log("scrolled to bottom, trigger new load");
+              getNewItems();
+            }
+          }
         })
+
+        function getNewItems() {
+          i = river.children().length;
+          console.log(i);
+          newItems = data.pagelist.slice(i,i+progLoadLimit);
+          console.log(newItems);
+
+          if(newItems.length != 0) {
+            // reveal next items
+            newItems.forEach(function(page, index) {
+              river.append('<h2><a href="'+page.homepage+'">~'+page.username+'</a></h2><p>Last modified '+page.modtime+'</p><iframe src="'+page.homepage+'" width="100%" height="300"></iframe>')
+            })
+
+          } else {
+            allItemsRevealed = true
+            console.log("all items have been loaded");
+          }
+        }
+
       })
+
     });
   </script>
   </body>
